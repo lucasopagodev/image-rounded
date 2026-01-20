@@ -1,52 +1,46 @@
-# Roundify (Image Corner Editor)
+# Roundify
 
-Um editor web **clean, responsivo e intuitivo** para **arredondar bordas de imagens** e **exportar** em **PNG / JPG / WebP** — tudo **localmente no navegador**, sem backend.
-
-> Ideal para criar imagens com cantos arredondados para avatares, cards, thumbnails e UI assets.
-
----
-
-## Preview
-
-- Upload por **drag & drop** ou clique
-- **Preview em tempo real**
-- Controle de **raio (px)**
-- Export em **1 clique**
-- **PNG com transparência**
-- Ajustes de **escala** e **qualidade** (JPG/WebP)
-
----
+Editor web para arredondar bordas de imagens e exportar em PNG, JPG ou WebP, tudo 100% local no navegador.
 
 ## Principais recursos
 
-- **Arredondamento real via Canvas** (não é só CSS)
-- **Processamento local**: as imagens não são enviadas para servidor
-- Export para:
-  - **PNG** (recomendado: mantém transparência)
-  - **JPG** (sem transparência, com fundo branco)
-  - **WebP**
-- UI **responsiva** (mobile e desktop)
-
----
+- Upload por drag & drop ou clique
+- Preview real via Canvas 2D (não é CSS)
+- Controle de raio, escala e qualidade
+- Exportação instantânea com `toBlob()`
+- PNG mantém transparência, JPG recebe fundo branco
+- Interface responsiva em uma única página
 
 ## Stack
 
 - React + TypeScript
 - Vite
-- Tailwind CSS
 - Canvas 2D API
-
----
+- CSS tradicional (Tailwind é opcional)
 
 ## Como rodar localmente
 
-### Pré-requisitos
-- Node.js 18+ (recomendado)
-
-### Passos
 ```bash
-# 1) Instalar dependências
 npm install
-
-# 2) Rodar em modo dev
 npm run dev
+```
+
+## Como buildar
+
+```bash
+npm run build
+npm run preview
+```
+
+## Como funciona (Canvas)
+
+1. A imagem é carregada localmente via `File` e `URL.createObjectURL`.
+2. O preview é renderizado no Canvas 2D com recorte arredondado.
+3. O export utiliza `canvas.toBlob()` em PNG, JPG ou WebP.
+4. JPG recebe fundo branco para evitar transparência.
+
+## Roadmap curto
+
+- Presets de raio
+- Exportação em lote
+- Histórico de ajustes recentes
