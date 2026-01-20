@@ -236,7 +236,7 @@ export const COPY = {
 } as const;
 
 export type Locale = keyof typeof COPY;
-export type Copy = typeof COPY["en"];
+export type Copy = (typeof COPY)[Locale];
 export type EditorCopy = Copy["editor"];
 export type DropzoneCopy = EditorCopy["dropzone"];
 export type ControlsCopy = EditorCopy["controls"];
