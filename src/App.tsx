@@ -23,7 +23,7 @@ export default function App() {
             <span className="logo-mark" aria-hidden="true">
               ◼
             </span>
-            <span className="brand-name">Roundify</span>
+            <span className="brand-name">Roundify Image</span>
           </div>
           <nav className="nav-links" aria-label="Navegação principal">
             <a href="#editor">Editor</a>
@@ -138,7 +138,7 @@ export default function App() {
 
       <footer className="site-footer">
         <div className="container footer-inner">
-          <span>Roundify</span>
+          <span>Roundify Image</span>
           <span>Feito para designers, devs e criadores.</span>
         </div>
       </footer>
