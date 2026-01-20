@@ -88,7 +88,7 @@ export async function exportCanvasToFile(canvas: HTMLCanvasElement, options: Exp
   });
 
   if (!blob) {
-    throw new Error("Falha ao gerar a imagem para exportação.");
+    throw new Error("Failed to generate the export.");
   }
 
   const url = URL.createObjectURL(blob);

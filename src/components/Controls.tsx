@@ -1,6 +1,8 @@
 import type { ExportFormat } from "../utils/canvas";
+import type { ControlsCopy } from "../utils/i18n";
 
 type ControlsProps = {
+  copy: ControlsCopy;
   radius: number;
   format: ExportFormat;
   quality: number;
@@ -16,6 +18,7 @@ type ControlsProps = {
 };
 
 export default function Controls({
+  copy,
   radius,
   format,
   quality,
@@ -35,7 +38,7 @@ export default function Controls({
     <div className="controls panel">
       <div className="control-row">
         <label className="control-label" htmlFor="radius-range">
-          Raio (px)
+          {copy.radiusLabel}
         </label>
         <div className="control-value">{radius}</div>
       </div>
@@ -53,7 +56,7 @@ export default function Controls({
       <div className="control-grid">
         <div className="control-field">
           <label className="control-label" htmlFor="format-select">
-            Formato
+            {copy.formatLabel}
           </label>
           <select
             id="format-select"
@@ -62,16 +65,16 @@ export default function Controls({
             className="select"
             disabled={!hasImage}
           >
-            <option value="png">PNG (transparência)</option>
-            <option value="jpeg">JPG (fundo branco)</option>
-            <option value="webp">WebP</option>
+            <option value="png">{copy.formatPng}</option>
+            <option value="jpeg">{copy.formatJpg}</option>
+            <option value="webp">{copy.formatWebp}</option>
           </select>
-          <p className="control-hint">PNG recomendado para transparência.</p>
+          <p className="control-hint">{copy.pngHint}</p>
         </div>
 
         <div className="control-field">
           <label className="control-label" htmlFor="scale-select">
-            Escala
+            {copy.scaleLabel}
           </label>
           <select
             id="scale-select"
@@ -80,17 +83,17 @@ export default function Controls({
             className="select"
             disabled={!hasImage}
           >
-            <option value="1">100% (original)</option>
-            <option value="0.75">75%</option>
-            <option value="0.5">50%</option>
-            <option value="0.25">25%</option>
+            <option value="1">{copy.scale100}</option>
+            <option value="0.75">{copy.scale75}</option>
+            <option value="0.5">{copy.scale50}</option>
+            <option value="0.25">{copy.scale25}</option>
           </select>
-          <p className="control-hint">Reduza peso sem perder o raio.</p>
+          <p className="control-hint">{copy.scaleHint}</p>
         </div>
 
         <div className="control-field">
           <label className="control-label" htmlFor="quality-range">
-            Qualidade ({qualityLabel})
+            {copy.qualityLabel} ({qualityLabel})
           </label>
           <input
             id="quality-range"
@@ -103,7 +106,7 @@ export default function Controls({
             className="range"
             disabled={!hasImage || format === "png"}
           />
-          <p className="control-hint">Disponível para JPG e WebP.</p>
+          <p className="control-hint">{copy.qualityHint}</p>
         </div>
       </div>
 
@@ -115,10 +118,10 @@ export default function Controls({
 
       <div className="controls-footer">
         <button className="btn primary" type="button" onClick={onExport} disabled={!hasImage}>
-          Exportar
+          {copy.export}
         </button>
         <button className="btn ghost" type="button" onClick={onClear} disabled={!hasImage}>
-          Limpar
+          {copy.clear}
         </button>
       </div>
     </div>

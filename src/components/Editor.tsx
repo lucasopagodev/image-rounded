@@ -14,6 +14,7 @@ import {
   getExportExtension,
 } from "../utils/canvas";
 import type { ExportFormat } from "../utils/canvas";
+import type { EditorCopy } from "../utils/i18n";
 
 const DEFAULT_RADIUS = 32;
 const DEFAULT_QUALITY = 0.92;
@@ -23,7 +24,13 @@ export type EditorHandle = {
   openFileDialog: () => void;
 };
 
-const Editor = forwardRef<EditorHandle>(function Editor(_, ref) {
+type EditorProps = {
+  copy: EditorCopy;
+};
+
+type ErrorKey = keyof EditorCopy["errors"];
+
+const Editor = forwardRef<EditorHandle, EditorProps>(function Editor({ copy }, ref) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -33,7 +40,7 @@ const Editor = forwardRef<EditorHandle>(function Editor(_, ref) {
   const [format, setFormat] = useState<ExportFormat>("png");
   const [quality, setQuality] = useState(DEFAULT_QUALITY);
   const [scale, setScale] = useState(DEFAULT_SCALE);
-  const [error, setError] = useState<string | null>(null);
+  const [errorKey, setErrorKey] = useState<ErrorKey | null>(null);
 
   useImperativeHandle(ref, () => ({
     openFileDialog: () => inputRef.current?.click(),
@@ -45,11 +52,11 @@ const Editor = forwardRef<EditorHandle>(function Editor(_, ref) {
       return;
     }
 
-    setError(null);
+    setErrorKey(null);
     const url = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => setImage(img);
-    img.onerror = () => setError("Não foi possível carregar a imagem.");
+    img.onerror = () => setErrorKey("load");
     img.src = url;
 
     return () => {
@@ -68,11 +75,11 @@ const Editor = forwardRef<EditorHandle>(function Editor(_, ref) {
   }, [image, radius, scale, format]);
 
   function handlePickFile(selected: File | null) {
-    setError(null);
+    setErrorKey(null);
     if (!selected) return;
 
     if (!selected.type.startsWith("image/")) {
-      setError("Envie um arquivo de imagem válido (PNG/JPG/WebP).");
+      setErrorKey("invalidFile");
       return;
     }
 
@@ -85,9 +92,9 @@ const Editor = forwardRef<EditorHandle>(function Editor(_, ref) {
   }
 
   async function handleExport() {
-    setError(null);
+    setErrorKey(null);
     if (!canvasRef.current || !image) {
-      setError("Envie uma imagem antes de exportar.");
+      setErrorKey("noImage");
       return;
     }
 
@@ -97,9 +104,9 @@ const Editor = forwardRef<EditorHandle>(function Editor(_, ref) {
       background: format === "jpeg" ? "#ffffff" : null,
     });
 
-    const baseName = (file?.name ?? "imagem").replace(/\.[^/.]+$/, "");
+    const baseName = (file?.name ?? copy.fileNameFallback).replace(/\.[^/.]+$/, "");
     const extension = getExportExtension(format);
-    const fileName = `${baseName}-rounded.${extension}`;
+    const fileName = `${baseName}-${copy.fileSuffix}.${extension}`;
 
     try {
       await exportCanvasToFile(canvasRef.current, {
@@ -108,7 +115,7 @@ const Editor = forwardRef<EditorHandle>(function Editor(_, ref) {
         fileName,
       });
     } catch (exportError) {
-      setError("Falha ao gerar a imagem para exportação.");
+      setErrorKey("exportFail");
     }
   }
 
@@ -119,11 +126,13 @@ const Editor = forwardRef<EditorHandle>(function Editor(_, ref) {
     setFormat("png");
     setQuality(DEFAULT_QUALITY);
     setScale(DEFAULT_SCALE);
-    setError(null);
+    setErrorKey(null);
     if (inputRef.current) {
       inputRef.current.value = "";
     }
   }
+
+  const errorMessage = errorKey ? copy.errors[errorKey] : null;
 
   return (
     <div className="editor-shell">
@@ -136,6 +145,7 @@ const Editor = forwardRef<EditorHandle>(function Editor(_, ref) {
           onChange={handleInputChange}
         />
         <Dropzone
+          copy={copy.dropzone}
           hasImage={Boolean(image)}
           fileName={file?.name}
           onPickFile={handlePickFile}
@@ -145,12 +155,13 @@ const Editor = forwardRef<EditorHandle>(function Editor(_, ref) {
       </div>
 
       <Controls
+        copy={copy.controls}
         radius={radius}
         format={format}
         quality={quality}
         scale={scale}
         hasImage={Boolean(image)}
-        error={error}
+        error={errorMessage}
         onRadiusChange={setRadius}
         onFormatChange={setFormat}
         onQualityChange={setQuality}

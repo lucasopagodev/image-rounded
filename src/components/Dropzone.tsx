@@ -1,6 +1,8 @@
 import { useState, type DragEvent, type KeyboardEvent, type RefObject } from "react";
+import type { DropzoneCopy } from "../utils/i18n";
 
 type DropzoneProps = {
+  copy: DropzoneCopy;
   hasImage: boolean;
   fileName?: string;
   onPickFile: (file: File | null) => void;
@@ -9,6 +11,7 @@ type DropzoneProps = {
 };
 
 export default function Dropzone({
+  copy,
   hasImage,
   fileName,
   onPickFile,
@@ -50,14 +53,12 @@ export default function Dropzone({
       role="button"
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      aria-label="Enviar imagem"
+      aria-label={copy.ariaLabel}
     >
       {!hasImage ? (
         <div className="dropzone-content">
-          <div className="dropzone-title">Arraste e solte sua imagem aqui</div>
-          <p className="dropzone-subtitle">
-            Ou clique para selecionar. PNG recomendado para transparência.
-          </p>
+          <div className="dropzone-title">{copy.title}</div>
+          <p className="dropzone-subtitle">{copy.subtitle}</p>
           <div className="dropzone-actions">
             <button
               className="btn secondary"
@@ -67,17 +68,17 @@ export default function Dropzone({
                 onOpenPicker();
               }}
             >
-              Escolher arquivo
+              {copy.choose}
             </button>
           </div>
-          <div className="dropzone-meta">Tudo roda localmente no navegador.</div>
+          <div className="dropzone-meta">{copy.localNote}</div>
         </div>
       ) : (
         <div className="canvas-wrap">
           <canvas ref={canvasRef} className="canvas-preview" />
           <div className="dropzone-meta">
-            <span className="file-name">{fileName ?? "Imagem carregada"}</span>
-            <span className="file-hint">Clique ou solte outra para substituir.</span>
+            <span className="file-name">{fileName ?? copy.loadedFallback}</span>
+            <span className="file-hint">{copy.replaceHint}</span>
           </div>
         </div>
       )}
